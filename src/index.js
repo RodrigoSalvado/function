@@ -1,5 +1,8 @@
 const { app } = require('@azure/functions');
 
-app.setup({
-    enableHttpStream: true,
+app.http('httpTrigger', {
+    methods: ['GET', 'POST'],
+    authLevel: 'anonymous',
+    handler: require('./functions/httpTrigger')
 });
+
