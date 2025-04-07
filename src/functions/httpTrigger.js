@@ -66,14 +66,9 @@ app.http('httpTrigger', {
                     return title.toLowerCase().includes(hashtag.toLowerCase()) ||
                            selftext.toLowerCase().includes(hashtag.toLowerCase());
                 })
-                .map(p => ({
-                    subreddit: p.data.subreddit,
-                    title: p.data.title,
-                    text: p.data.selftext,
-                    upvote_ratio: p.data.upvote_ratio,
-                    ups: p.data.ups,
-                    score: p.data.score
-                }));
+                .map(p => {
+                    return `Subreddit: ${p.data.subreddit}\nTítulo: ${p.data.title}\nTexto: ${p.data.selftext}\nUpvote Ratio: ${p.data.upvote_ratio}\nUps: ${p.data.ups}\nScore: ${p.data.score}\n\n`;
+                });
 
             if (filtrados.length === 0) {
                 return {
@@ -82,10 +77,13 @@ app.http('httpTrigger', {
                 };
             }
 
+            // Juntar os posts filtrados numa única string
+            const responseBody = filtrados.join('\n');
+
             return {
                 status: 200,
-                headers: { "Content-Type": "application/json" },
-                body: filtrados
+                headers: { "Content-Type": "text/plain" },
+                body: responseBody
             };
 
         } catch (error) {
