@@ -54,7 +54,7 @@ app.http('httpTrigger', {
                     'Authorization': `bearer ${token}`,
                     'User-Agent': 'MyAPI/0.0.1'
                 },
-                params: { limit: 20 }
+                params: { limit: 50 }
             });
 
             const posts = redditRes.data.data.children;
