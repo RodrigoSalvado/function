@@ -55,7 +55,7 @@ app.http('httpTrigger', {
                     'User-Agent': 'MyAPI/0.0.1'
                 },
                 params: {
-                    limit: 100,
+                    limit: 25,
                     after: after
                 }
             });
