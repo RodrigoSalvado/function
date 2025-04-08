@@ -2,9 +2,9 @@ const { app } = require('@azure/functions');
 const axios = require('axios');
 const qs = require('qs');
 
-const CLIENT_ID = process.env.REDDIT_CLIENT_ID;
-const SECRET = process.env.REDDIT_SECRET;
-const USERNAME = process.env.REDDIT_USERNAME;
+const CLIENT_ID = process.env.REDDIT_CLIENT_ID || 'bzG6zHjC23GSenSIXe0M-Q';
+const SECRET = process.env.REDDIT_SECRET || 'DoywW0Lcc26rvDforDKkLOSQsUUwYA';
+const USERNAME = process.env.REDDIT_USERNAME || 'Major-Noise-6411';
 
 app.http('httpTrigger', {
     methods: ['GET', 'POST'],
