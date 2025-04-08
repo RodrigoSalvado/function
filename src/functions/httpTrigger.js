@@ -13,12 +13,12 @@ app.http('httpTrigger', {
         context.log('A função HTTP foi chamada.');
 
         const subreddit = request.query.get('subreddit');
-        const hashtag = request.query.get('hashtag');
+        const sortType = request.query.get('sort') || 'new';  // Pode ser 'new', 'hot', 'top', etc.
 
-        if (!subreddit || !hashtag) {
+        if (!subreddit) {
             return {
                 status: 400,
-                body: "Parâmetros 'subreddit' e 'hashtag' são obrigatórios."
+                body: "Parâmetro 'subreddit' é obrigatório."
             };
         }
 
@@ -49,38 +49,32 @@ app.http('httpTrigger', {
 
             const token = tokenResponse.data.access_token;
 
-            const redditRes = await axios.get(`https://oauth.reddit.com/r/${subreddit}/new`, {
+            // Alterar tipo de pesquisa (pode ser 'new', 'hot', 'top', etc.)
+            const redditRes = await axios.get(`https://oauth.reddit.com/r/${subreddit}/${sortType}`, {
                 headers: {
                     'Authorization': `bearer ${token}`,
                     'User-Agent': 'MyAPI/0.0.1'
                 },
-                params: {
-                    limit: 50
-                }
+                params: { limit: 100 }  // Definir o limite aqui
             });
 
             const posts = redditRes.data.data.children;
 
-            const filtrados = posts
-                .filter(p => {
-                    const title = p.data.title || '';
-                    const selftext = p.data.selftext || '';
-                    return title.toLowerCase().includes(hashtag.toLowerCase()) ||
-                           selftext.toLowerCase().includes(hashtag.toLowerCase());
-                })
+            // Formatar os posts como uma string para resposta
+            const result = posts
                 .map(p => {
                     return `Subreddit: ${p.data.subreddit}\nTítulo: ${p.data.title}\nTexto: ${p.data.selftext}\nUpvote Ratio: ${p.data.upvote_ratio}\nUps: ${p.data.ups}\nScore: ${p.data.score}\n\n`;
                 });
 
-            if (filtrados.length === 0) {
+            if (result.length === 0) {
                 return {
                     status: 404,
-                    body: "Nenhum post encontrado com essa hashtag."
+                    body: "Nenhum post encontrado."
                 };
             }
 
-            // Juntar os posts filtrados numa única string
-            const responseBody = filtrados.join('\n');
+            // Juntar os posts numa única string
+            const responseBody = result.join('\n');
 
             return {
                 status: 200,
